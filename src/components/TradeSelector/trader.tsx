@@ -5,14 +5,7 @@ import { useTradeOperations } from "../../hooks/trades.hooks";
 import { useAccount } from 'wagmi';
 import toast from "react-hot-toast";
 
-type Trade = {
-  user: string;
-  tradeId: string;
-  token: string;
-  amount: bigint;
-  price: bigint;
-  timestamp: bigint;
-}
+type Trade = string;
 
 const TradeSelector: React.FC = () => {
   const {
@@ -37,7 +30,10 @@ const TradeSelector: React.FC = () => {
   const { data: trades, isLoading: tradesLoading } = useGetUserTrades(user);
 
   const handleExecuteTrade = () => {
-    if (!token || !amount || !price || !tradeId) {
+    let randomId = Date.now();
+    randomId = (randomId%1000000);
+    setTradeId(randomId.toString());
+    if (!token || !amount || !price) {
       toast.error("Please fill all trade details.");
       return;
     }
@@ -97,16 +93,6 @@ const TradeSelector: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Trade ID:</label>
-                <input
-                  type="text"
-                  value={tradeId}
-                  onChange={(e) => setTradeId(e.target.value)}
-                  className="w-full p-2 rounded-md bg-gray-700 border border-gray-600"
-                />
-              </div>
-
               <button
                 onClick={handleExecuteTrade}
                 disabled={isSending || confirming}
@@ -158,29 +144,9 @@ const TradeSelector: React.FC = () => {
             ) : trades && Array.isArray(trades) && trades.length > 0 ? (
               <div className="space-y-4">
                   {trades.map((trade: Trade) => (
-                  <div 
-                    key={trade.tradeId} 
-                    className="bg-gray-700 rounded-lg p-4 border border-gray-600"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium">Token:</h3>
-                        <p className="text-sm text-gray-300 break-all">{trade.token}</p>
-                        <p className="text-sm text-gray-300">ID: {trade.tradeId}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          Price: {Number(trade.price)} ETH
-                        </p>
-                        <p className="text-sm text-gray-300">
-                          Amount: {Number(trade.amount)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-gray-400">
-                      {new Date(Number(trade.timestamp) * 1000).toLocaleString()}
-                    </div>
-                  </div>
+                <div>
+                  {trade}
+                </div>
                 ))}
               </div>
             ) : (

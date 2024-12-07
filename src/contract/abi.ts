@@ -52,39 +52,6 @@ export const TradeAbi = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "price",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "tradeId",
-				"type": "string"
-			}
-		],
-		"name": "executeTrade",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -104,36 +71,6 @@ export const TradeAbi = [
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "tradeId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "details",
-				"type": "string"
-			}
-		],
-		"name": "recordAttestation",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -150,9 +87,9 @@ export const TradeAbi = [
 			},
 			{
 				"indexed": false,
-				"internalType": "address",
+				"internalType": "string",
 				"name": "token",
-				"type": "address"
+				"type": "string"
 			},
 			{
 				"indexed": false,
@@ -174,29 +111,31 @@ export const TradeAbi = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "newOwner",
+				"name": "user",
 				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+			},
 			{
-				"internalType": "address",
+				"internalType": "string",
 				"name": "token",
-				"type": "address"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "price",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "tradeId",
+				"type": "string"
 			}
 		],
-		"name": "withdrawToken",
+		"name": "executeTrade",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -224,9 +163,9 @@ export const TradeAbi = [
 						"type": "string"
 					},
 					{
-						"internalType": "address",
+						"internalType": "string",
 						"name": "token",
-						"type": "address"
+						"type": "string"
 					},
 					{
 						"internalType": "uint256",
@@ -287,6 +226,36 @@ export const TradeAbi = [
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "tradeId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "details",
+				"type": "string"
+			}
+		],
+		"name": "recordAttestation",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "",
 				"type": "string"
@@ -305,9 +274,9 @@ export const TradeAbi = [
 				"type": "string"
 			},
 			{
-				"internalType": "address",
+				"internalType": "string",
 				"name": "token",
-				"type": "address"
+				"type": "string"
 			},
 			{
 				"internalType": "uint256",
@@ -332,6 +301,19 @@ export const TradeAbi = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			},
@@ -350,6 +332,24 @@ export const TradeAbi = [
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawToken",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

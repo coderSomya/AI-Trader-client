@@ -44,6 +44,8 @@ export const useTradeOperations = () => {
 
   const executeTrade = ({ user, token, amount, price, tradeId }: ExecuteTradeProps) => {
     setIsSending(true);
+    console.log('Inside execute trade');
+    console.log(user, token, amount, price);
     writeContract(
       {
         abi: TradeAbi,
@@ -59,7 +61,7 @@ export const useTradeOperations = () => {
           setIsSending(false);
           setConfirming(true);
         },
-        onError: () => {
+        onError: (e) => {
           setIsSending(false);
           toast.error("Transaction Failed! Try Again.");
         },

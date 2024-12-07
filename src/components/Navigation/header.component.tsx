@@ -9,7 +9,7 @@ export const Header = () => {
       <Link href={"/"} className="text-xl md:text-3xl 2xl:text-4xl font-bold">
         AI-Trader
       </Link>
-
+<div className="flex gap-3"> <li className="text-none"><a href="/ai">AI Assistant</a></li><li><a href="/trade">Trade</a></li></div>
       <ConnectWalletButton />
     </div>
   );

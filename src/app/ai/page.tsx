@@ -22,9 +22,14 @@ interface Preferences {
 
 const MarketAnalysisComponent: React.FC = () => {
   const { address } = useAccount();
+  console.log("account: ", address);
   const [action, setAction] = useState<ActionType>("ANALYZE_MARKET");
   const [token, setToken] = useState("");
-  const [preferences, setPreferences] = useState<Preferences>({});
+  const [preferences, setPreferences] = useState<Preferences>({
+    "riskTolerance": "moderate",
+    "investmentHorizon": "medium",
+    "tradingStyle": "swing"
+  });
   const [response, setResponse] = useState(" ");
   const [loading, setLoading] = useState(false);
 

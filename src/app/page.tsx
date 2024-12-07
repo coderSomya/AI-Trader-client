@@ -7,25 +7,17 @@ export default function HomePage() {
       <p className="mx-auto md:w-8/12 text-center pt-20 pb-5 font-extralight text-xl md:text-5xl">
         Tryout{" "}
         <a
-          href="/ai"
+          href="/"
           rel="noopener noreferrer"
           className="font-bold"
         >
-          AI Assistant | 
-        </a>
-        {"  "}
-        <a
-          href="/trade"
-          rel="noopener noreferrer"
-          className="font-bold"
-        >
-          Execute Trade
+         AI driven trading...!
         </a>
         <hr/>
         <hr/>
         Or checkout....{" "}
         <a
-          href="http://"
+          href="https://wagmi.sh/"
           rel="noopener noreferrer"
           className="font-bold"
         >
@@ -33,7 +25,7 @@ export default function HomePage() {
         </a>
         ,{" "}
         <a
-          href="http://"
+          href="https://viem.sh/"
           target="_blank"
           rel="noopener noreferrer"
           className="font-bold"
@@ -42,7 +34,7 @@ export default function HomePage() {
         </a>{" "}
         &{" "}
         <a
-          href="http://"
+          href="https://www.rainbowkit.com/"
           target="_blank"
           rel="noopener noreferrer"
           className="font-bold"
@@ -51,7 +43,7 @@ export default function HomePage() {
         </a>
       </p>
       <div className="text-xl text-center pt-5 text-bold">
-  ETH India
+  ETH India 2024
       </div>
     </main>
   );
