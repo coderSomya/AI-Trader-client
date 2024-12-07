@@ -5,28 +5,27 @@ export default function HomePage() {
   return (
     <main className="w-full min-h-screen md:px-10 py-5 p-5">
       <p className="mx-auto md:w-8/12 text-center pt-20 pb-5 font-extralight text-xl md:text-5xl">
-        Built With{" "}
+        Tryout{" "}
         <a
-          href="http://"
-          target="_blank"
+          href="/ai"
           rel="noopener noreferrer"
           className="font-bold"
         >
-          Next Js
+          AI Assistant | 
         </a>
-        ,{" "}
+        {"  "}
         <a
-          href="http://"
-          target="_blank"
+          href="/trade"
           rel="noopener noreferrer"
           className="font-bold"
         >
-          Tailwind CSS
+          Execute Trade
         </a>
-        ,{" "}
+        <hr/>
+        <hr/>
+        Or checkout....{" "}
         <a
           href="http://"
-          target="_blank"
           rel="noopener noreferrer"
           className="font-bold"
         >
@@ -51,14 +50,8 @@ export default function HomePage() {
           Rainbowkit
         </a>
       </p>
-      <div className="text-center pt-5">
-        <a
-          href=""
-          target="_blank"
-          className="border px-6 py-3 rounded-md mt-2 border-[#272727] hover:bg-[#272727] transition-all"
-        >
-          See Examples
-        </a>
+      <div className="text-xl text-center pt-5 text-bold">
+  ETH India
       </div>
     </main>
   );

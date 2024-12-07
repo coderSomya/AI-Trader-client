@@ -1,71 +1,142 @@
 "use client"
 
-
 import React, { useState } from "react";
-import { TRADING_AGENT_CONFIG } from "../../configs/coinbase-agent.config";
-import { coinbaseAgent } from "@coinbase/agentkit";
-import toast from "react-hot-toast";
-import { TradingAgent } from "@/services/tradingAgent";
+import { toast } from "react-hot-toast";
+import { useAccount } from 'wagmi';
+import OpenAI from 'openai';
+
+// Initialize OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true 
+});
+
+type ActionType = "ANALYZE_MARKET" | "RECOMMEND_TRADE" | "PORTFOLIO_ANALYSIS";
+
+interface Preferences {
+  riskTolerance?: string;
+  investmentHorizon?: string;
+  tradingStyle?: string;
+  [key: string]: any;
+}
 
 const MarketAnalysisComponent: React.FC = () => {
-  const [action, setAction] = useState("ANALYZE_MARKET");
+  const { address } = useAccount();
+  const [action, setAction] = useState<ActionType>("ANALYZE_MARKET");
   const [token, setToken] = useState("");
-  const [preferences, setPreferences] = useState({});
-  const [response, setResponse] = useState("");
+  const [preferences, setPreferences] = useState<Preferences>({});
+  const [response, setResponse] = useState(" ");
   const [loading, setLoading] = useState(false);
 
-  const agent = coinbaseAgent.create(TRADING_AGENT_CONFIG);
-
-  const handleGo = async () => {
-    setLoading(true);
-    setResponse("");
-
-    let prompt = "";
+  const generatePrompt = (action: ActionType, token: string, preferences: Preferences): string => {
     switch (action) {
       case "ANALYZE_MARKET":
-        if (!token) {
-          toast.error("Please provide a token to analyze.");
-          setLoading(false);
-          return;
-        }
-        prompt = `Analyze the current market conditions for ${token}. Consider:\n  1. Recent price movements\n  2. Volume trends\n  3. Market sentiment\n  4. Technical indicators`;
-        break;
+        return `You are an expert crypto market analyst. Analyze the current market conditions for ${token}. Consider:
+          1. Recent price movements
+          2. Volume trends
+          3. Market sentiment
+          4. Technical indicators
+          
+          Provide a detailed analysis with specific insights and data points.`;
 
       case "RECOMMEND_TRADE":
-        prompt = `Based on the market analysis and user preferences, recommend a trade with:\n  1. Trade direction (buy/sell)\n  2. Token pair\n  3. Amount\n  4. Target price\n  5. Stop loss\n  Explain your reasoning for each recommendation.`;
-        break;
+        return `You are an expert crypto trading advisor. Based on current market conditions and these user preferences (${JSON.stringify(preferences)}), recommend a trade for ${token} with:
+          1. Trade direction (buy/sell)
+          2. Token pair
+          3. Suggested entry price range
+          4. Target price
+          5. Stop loss
+          
+          Explain your reasoning for each recommendation and include risk warnings.`;
 
       case "PORTFOLIO_ANALYSIS":
-        prompt = `Analyze the current portfolio across chains:\n  1. Asset distribution\n  2. Performance metrics\n  3. Risk assessment\n  4. Rebalancing recommendations`;
-        break;
+        return `You are an expert crypto portfolio analyst. For the wallet address ${address}, analyze:
+          1. Asset distribution
+          2. Performance metrics
+          3. Risk assessment
+          4. Rebalancing recommendations
+          
+          Provide specific recommendations for portfolio optimization.`;
 
       default:
-        toast.error("Invalid action selected.");
-        setLoading(false);
-        return;
+        throw new Error("Invalid action selected");
     }
+  };
 
+  const fetchCoinbasePrice = async (token: string) => {
     try {
-      const agentResponse = await agent.query({ prompt });
-      setResponse(agentResponse);
+      const response = await fetch(`https://api.coinbase.com/v2/prices/${token}-USD/spot`);
+      const data = await response.json();
+      return data.data.amount;
     } catch (error) {
-      toast.error("Failed to fetch response from the agent.");
-      console.error(error);
+      console.error("Error fetching price from Coinbase:", error);
+      return null;
+    }
+  };
+
+  const handleGo = async () => {
+    try {
+      setLoading(true);
+      setResponse("");
+
+      if (action === "ANALYZE_MARKET" && !token) {
+        toast.error("Please provide a token to analyze.");
+        return;
+      }
+
+      // Fetch current price from Coinbase if analyzing market or recommending trade
+      let currentPrice = null;
+      if (["ANALYZE_MARKET", "RECOMMEND_TRADE"].includes(action)) {
+        currentPrice = await fetchCoinbasePrice(token);
+      }
+
+      const prompt = generatePrompt(action, token, preferences);
+      const additionalContext = currentPrice ? `\nCurrent ${token} price: $${currentPrice}` : "";
+
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional crypto market analyst with extensive experience in technical and fundamental analysis."
+          },
+          {
+            role: "user",
+            content: prompt + additionalContext
+          }
+        ],
+        model: "gpt-3.5-turbo",
+        temperature: 0.7,
+      });
+
+      setResponse(completion.choices[0].message.content || "No response generated");
+
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to generate analysis");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div style={{ padding: "1rem", maxWidth: "600px", margin: "auto" }}>
-      <h2>Market Analysis</h2>
+  const handlePreferencesChange = (value: string) => {
+    try {
+      const parsedValue = value ? JSON.parse(value) : {};
+      setPreferences(parsedValue);
+    } catch (error) {
+      console.error("Invalid JSON:", error);
+    }
+  };
 
-      <div style={{ marginBottom: "1rem" }}>
-        <label>Action:</label>
+  return (
+    <div className="p-4 max-w-2xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">Market Analysis</h2>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Action:</label>
         <select
           value={action}
-          onChange={(e) => setAction(e.target.value)}
-          style={{ width: "100%", padding: "0.5rem" }}
+          onChange={(e) => setAction(e.target.value as ActionType)}
+          className="w-full p-2 border rounded-md text-black"
         >
           <option value="ANALYZE_MARKET">Analyze Market</option>
           <option value="RECOMMEND_TRADE">Recommend Trade</option>
@@ -74,26 +145,31 @@ const MarketAnalysisComponent: React.FC = () => {
       </div>
 
       {action === "ANALYZE_MARKET" && (
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Token:</label>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Token:</label>
           <input
             type="text"
             value={token}
-            onChange={(e) => setToken(e.target.value)}
+            onChange={(e) => setToken(e.target.value.toUpperCase())}
             placeholder="Enter token (e.g., ETH)"
-            style={{ width: "100%", padding: "0.5rem" }}
+            className="w-full p-2 border rounded-md text-black"
           />
         </div>
       )}
 
       {action === "RECOMMEND_TRADE" && (
-        <div style={{ marginBottom: "1rem" }}>
-          <label>User Preferences:</label>
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Trading Preferences:</label>
           <textarea
             value={JSON.stringify(preferences, null, 2)}
-            onChange={(e) => setPreferences(JSON.parse(e.target.value || "{}"))}
-            placeholder="Enter preferences as JSON"
-            style={{ width: "100%", padding: "0.5rem" }}
+            onChange={(e) => handlePreferencesChange(e.target.value)}
+            placeholder='{
+  "riskTolerance": "moderate",
+  "investmentHorizon": "medium",
+  "tradingStyle": "swing"
+}'
+            className="w-full p-2 border rounded-md font-mono text-sm text-black"
+            rows={5}
           />
         </div>
       )}
@@ -101,15 +177,19 @@ const MarketAnalysisComponent: React.FC = () => {
       <button
         onClick={handleGo}
         disabled={loading}
-        style={{ width: "100%", padding: "0.5rem", marginBottom: "1rem" }}
+        className={`w-full p-2 rounded-md ${
+          loading 
+            ? "bg-gray-300 cursor-not-allowed" 
+            : "bg-blue-500 hover:bg-blue-600 text-white"
+        }`}
       >
-        {loading ? "Processing..." : "GO"}
+        {loading ? "Analyzing..." : "Analyze"}
       </button>
 
       {response && (
-        <div style={{ marginTop: "1rem", padding: "1rem", border: "1px solid #ccc" }}>
-          <h3>Response:</h3>
-          <pre>{response}</pre>
+        <div className="mt-4 p-4 border rounded-md">
+          <h3 className="text-lg font-medium mb-2">Analysis:</h3>
+          <div className="whitespace-pre-wrap font-mono text-sm">{response}</div>
         </div>
       )}
     </div>

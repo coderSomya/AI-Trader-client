@@ -7,7 +7,7 @@ export const Header = () => {
   return (
     <div className="w-full border-b border-[#2d2d2d] flex items-center justify-between md:px-10 p-5 py-5">
       <Link href={"/"} className="text-xl md:text-3xl 2xl:text-4xl font-bold">
-        Starter Template
+        AI-Trader
       </Link>
 
       <ConnectWalletButton />

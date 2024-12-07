@@ -10,28 +10,28 @@ export const Footer = () => {
   return (
     <div className="w-full flex justify-center items-center p-5 border-t border-[#2d2d2d] gap-4">
       <a
-        href="https://instagram.com/devverse.io"
+        href="https://www.instagram.com/ethindiaco/?hl=en"
         referrerPolicy="no-referrer"
         target="_blank"
       >
         <FaSquareInstagram size={40} />
       </a>
       <a
-        href="https://github.com/ScreenTechnicals"
+        href="https://github.com/ETHIndia"
         referrerPolicy="no-referrer"
         target="_blank"
       >
         <FaSquareGithub size={40} />
       </a>
       <a
-        href="https://twitter.com/ChinmaySa1"
+        href="https://x.com/ETHIndiaco"
         referrerPolicy="no-referrer"
         target="_blank"
       >
         <FaSquareXTwitter size={40} />
       </a>
       <a
-        href="https://www.youtube.com/@Dev_Verse"
+        href="www.youtube.com/@ethindia965"
         referrerPolicy="no-referrer"
         target="_blank"
       >
